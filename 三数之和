@@ -1,0 +1,39 @@
+/*
+解题思路：
+1、问题a+b+c = 0, 可以转换为a = -(b + c);
+2、首先要解决不生成重复解，则a的值不可以重复，可以先对数组做一次排序，相邻的重复数字跳过
+3、问题转换为在a的位置后面寻找b和c，通过前面的排序，确保了数字的大小是从小达到排序，
+可以考虑定义双指针，从左右分别向里靠拢，根据总和来更新左指针或者右指针。
+*/
+
+class ThreeSum {
+public:
+	vector<vector<int>> threeSum(vector<int>& nums) {
+		vector<vector<int> > res;
+		sort(nums.begin(), nums.end());
+		for (int i = 0; i < nums.size(); i++)
+		{
+			if (i > 0 && nums[i] == nums[i - 1])
+				continue;
+
+			int l = i + 1, k = nums.size() - 1;
+			while (l < r)
+			{
+				int s = nums[i] + nums[j] + nums[k];
+				if (s > 0)
+					r--;
+				else if (s < 0)
+					l++;
+				else
+				{
+					res.push_back(vector<int>{nums[i], nums[j], nums[k]});
+					while (l < r && nums[l] == nums[l + 1]) l++;
+					while (l < r && nums[r] == nums[r - 1])r--;
+					l++, r--;
+				}
+			}
+
+		}
+		return res;
+	}
+};
