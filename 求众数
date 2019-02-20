@@ -1,0 +1,51 @@
+/*
+解题思路：
+Solution 1：
+1、题目中说明众数是出现次数大于n/2向下取整的元素，并且一定有众数，那么经过排序后，位于nums[nums.length/2]的元素一定是众数，
+因为不管是向左数或者向右数，都肯定只有改元素的次数大于等于length/2
+Solution 2：
+1、摩尔投票法
+2、由于众数保证了元素出现次数超过n/2, 我们有一个计数器m，和一个投票数m，遍历整个数组，通过计数器，每次移除一对或者多对不同的数据，
+那么剩余的数组中，一定存在满足一个数，满足众数的要求。最终剩余的那个数，则一定是众数。
+*/
+
+class MajorElement {
+public:
+	//Sulotion 1
+	int majorityElement_1(vector<int>& nums) {
+		sort(nums.begin(), nums.end());
+		int cnt = 0, max_cnt = 0, value = nums[0];
+		for (int i = 0; i < nums.size(); i++)
+		{
+			if (i < nums.size() - 1 && nums[i] == nums[i + 1]) 
+				cnt++;
+			else
+			{
+				if (max_cnt < cnt) 
+				{
+					max_cnt = cnt;
+					value = nums[i];
+				}
+				cnt = 0;
+			}
+		}
+		return value;
+	}
+	//Solution 2
+	int majorityElement(vector<int>& nums) {
+		int maj = nums[0];
+		int cnt = 1;
+		for (int i = 1; i < nums.size(); i++)
+		{
+			if (nums[i] == maj)
+				cnt++;
+			else
+			{
+				cnt--;
+				if (cnt == 0)
+					maj = nums[i + 1];
+			}
+		}
+		return maj;
+	}
+};
