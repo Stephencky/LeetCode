@@ -1,0 +1,24 @@
+/*
+解题思路：
+1、由于数组的长度为n，那么说明最终的结果一定是落在1到n+1之间。
+2、可以考虑把元素组进行意味，因此，我们只需求区间[1，n+1]和数组落在1到n+1之间的交集。
+3、初始化一个数组res， 如果数组的元素落在[1, n+1]，则res[nums[i]] = nums[i], 否则不做处理。
+4、遍历一遍数组，发现第一个数组res下标和值不相等的元素，其下标就是答案
+*/
+class FirstMissPos {
+public:
+	int firstMissingPositive(vector<int>& nums) {
+		int n = nums.size();
+		vector<int> res(n+1);
+		for (int i = 0; i < n; i++) {
+			if (nums[i] >= 1 && nums[i] <= n)
+				res[nums[i]] = nums[i];
+		}
+		for (int i = 1; i <= n; i++)
+		{
+			if (res[i] != i)
+				return i;
+		}
+		return n + 1;
+	}
+};
