@@ -1,0 +1,24 @@
+/*
+解题思路：
+1、可以考虑用双指针，快指针每次移动两格，慢指针一次移动一格，如果链表中不存在环，总有一个指针会走到末尾。
+2、如果存在环，那么由于二者速度差异，快指针终将追上慢指针。
+*/
+class ListHasCircle {
+public:
+	bool hasCycle(ListNode *head) {
+		if (head == nullptr || head->next == nullptr)
+			return false;
+		ListNode *first = head;
+		ListNode *second = head->next;
+		while (first && second && second->next) {
+			if (first == second)
+				return true;
+			else
+			{
+				first = first->next;
+				second = second->next->next;
+			}
+		}
+		return false;
+	}
+};
