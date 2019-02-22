@@ -1,0 +1,96 @@
+/*
+解题思路：
+Solution 1：
+1、考虑链表均为有序，那么最小的元素必定落在所有链表的头部。
+2、每次从头部选出最小元素出来后，头部最小元素的链表向后移一位，重新计算最小元素。
+3、考虑使用优先级队列，对所有链表的首节点建立优先级队列，每次从队列中腾出一个元素，往后移，再更新队列。
+4、时间复杂度：
+①建立优先级队列O(klog(k));
+②每次从队列中腾出一个元素，并插入新元素，假设每个队列平均长度为n，则耗费k*n+k*n*logk
+③因此总的时间复杂度为k*n = O(n)
+Solution 2:
+1、每次合并两个链表，循环合并
+*/
+
+//a的val值小的优先级高
+struct cmp {
+	bool operator()(const ListNode *a, const ListNode *b)
+	{
+		return a->val > b->val;
+	}
+};
+
+
+class MergeKSortList {
+public:
+	//Solution 1
+	ListNode* mergeKLists1(vector<ListNode*>& lists) {
+		if (lists.size() == 0)
+			return nullptr;
+		priority_queue<ListNode*, vector<ListNode*>, cmp> q;
+		ListNode * head = nullptr, *res = nullptr;
+		for (auto list : lists)
+		{
+			if (list)
+				q.push(list);
+		}
+		if (q.empty())
+			return nullptr;
+		res = head = q.top();
+		q.pop();
+		if (head->next)
+			q.push(head->next);
+
+		while (!q.empty())
+		{
+			ListNode* node = q.top();
+			q.pop();
+			if (node->next)
+				q.push(node->next);
+			head->next = node;
+			head = head->next;
+		}
+		return res;
+	}
+	//Solution 2
+	ListNode* merge2SortLists(ListNode *list_a, ListNode *list_b){
+		ListNode tmp(0);
+		ListNode *head = &tmp;
+		if (list_a == nullptr)
+			return list_b;
+		if (list_b == nullptr)
+			return list_a;
+		if (list_a == nullptr && list_b == nullptr)
+			return nullptr;
+
+		while (list_a && list_b){
+			if (list_a->val < list_b->val) {
+				head->next = list_a;
+				list_a = list_a->next;
+			}
+			else {
+				head->next = list_b;
+				list_b = list_b->next;
+			}	
+			head = head->next;
+		}
+		if (list_a)
+			head->next = list_a;
+		if (list_b)
+			head->next = list_b;
+		return tmp.next;
+	}
+
+	ListNode* mergeKLists(vector<ListNode*>& lists){
+		if (lists.size() == 0)
+			return nullptr;
+		if (lists.size() == 1)
+			return lists[0];
+		ListNode *tmp = merge2SortLists(lists[0], lists[1]);
+		for (int i = 2; i < lists.size(); i++)
+		{
+			tmp = merge2SortLists(tmp, lists[i]);
+		}
+		return tmp;
+	}
+};
