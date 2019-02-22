@@ -1,0 +1,24 @@
+/*
+解题思路：
+1、利用栈的特性，括号相互匹配的出栈，否则入栈
+2、注意栈为空时，先入栈，否则调用st.top会返回失败
+*/
+class ValidParentheses {
+  bool isValid(string s) {
+		stack<char> st;
+		for(auto c : s){
+            if(st.empty())
+                st.push(c);
+			else if (c == ')' && st.top() == '('
+				|| c == '}' && st.top() == '{'
+				|| c == ']' && st.top() == '[')
+				st.pop();
+			else
+                st.push(c);
+		}
+		if (st.empty())
+			return true;
+		else
+			return false;
+	}
+};
