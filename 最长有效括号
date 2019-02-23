@@ -1,0 +1,33 @@
+/*
+解题思路：
+1、按照我们自己数数的思维，从左往右，从（开始计数，如果遇到），把sum进行减1，知道sum < 0,从新计数，并更新最大值
+2、如果sum == 0,则把当前有效长度赋予当前数数长度，当最后（数量大于）数量时，无法确认有效长度，则可以通过计算反向的遍历来确定一个最大值。
+3、最终，取最大值为最长有效括号长度
+*/
+
+class LongestValidParentheses {
+public:
+	
+	int calc(string s, int start, int end, int flag, char cTem) {
+		using std::cout;
+		int sum = 0, validLen = 0, curLen = 0, maxLen = 0;
+		for (int i = start; i != end; i += flag) {
+			sum += s[i] == cTem ? 1 : -1;
+			curLen++;
+			if (sum < 0)
+			{
+				curLen = 0;
+				sum = 0;
+				maxLen = maxLen < validLen ? validLen : maxLen;
+				validLen = 0;
+			}
+			else if(sum == 0)
+				validLen = curLen;
+		}
+		cout << validLen << " " << maxLen << "\n";
+		return maxLen < validLen ? validLen : maxLen;
+	}
+	int longestValidParentheses(string s) {
+		return max(calc(s, 0, s.length(), 1, '('), calc(s, s.length() - 1, -1, -1, ')'));
+	}
+};
