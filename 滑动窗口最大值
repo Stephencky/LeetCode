@@ -1,0 +1,74 @@
+/*
+解题思路：
+Solution 1:
+1、中规中矩，使用一个deque长度为k的存储窗口，记录窗口的max_value值；
+2、滑动一个窗口，如果新值比max_value大，那么更新max_value,并且更新窗口
+3、如果新值比max_value小，那么分两种情况，如果max_value为窗口的首个值，
+    那么需要在新的窗口重新计算max_value,如果max_value不是窗口的首值，那么更新窗口保持max_value;
+//优缺点分析：
+1、方法一相对来说很直观，但是当max_value为窗口首值时，每次需要重新遍历窗口，重新计算最大值。
+
+Solution 2：
+优化Solution 1
+1、从Solution1 的分析中，由于deque我们存储了整个窗口，并且窗口处于无序状态，导致需要重新计算max_value。
+2、考虑这样一个deque，该deque只存储可能为窗口最大值得元素，且从大到小排序。
+3、只要deque中存在元素，说明deque中一定存在为下次最大值得可能值。
+具体做法如下：
+①、从第k+1个元素起，如果deque中的首元素为窗口的最左值，删除首元素。
+②、对于新元素，如果比deque的末尾还小，说明新元素不需插入deque中，最大值肯定还在deque中。
+③、如果deque末尾元素比新元素小，那么对于deque中比新元素小的值都可以删除，因为最大值肯定可以被新元素替代。
+④、如果i >= k-1, 取deque.front()插入结果中。
+*/
+class SlidingWindow {
+public:
+	vector<int> maxSlidingWindow1(vector<int>& nums, int k) {
+		vector<int> res;
+		if (nums.size() == 0)
+			return res;
+
+		int max_value = nums[0];
+		int len = nums.size();
+		deque<int> wind;
+		for (int i = 0; i < len; i++) {
+			if (i < k) {
+				wind.push_back(nums[i]);
+				max_value = max(max_value, nums[i]);
+			}
+			else {
+				res.push_back(max_value);
+				if (nums[i] > max_value) {
+					max_value = nums[i];
+					wind.pop_front();
+					wind.push_back(nums[i]);
+				}
+				else if(max_value != wind.front()){
+					wind.pop_front();
+					wind.push_back(nums[i]);
+				}
+				else {
+					wind.pop_front();
+					wind.push_back(nums[i]);
+					max_value = wind.front();
+					for (int value : wind)
+						max_value = max(value, max_value);
+				}
+			}
+		}
+		res.push_back(max_value);
+		return res;
+	}
+	vector<int> maxSlidingWindow(vector<int>& nums, int k) {
+		deque<int> wind;
+		vector<int> res;
+		for (int i = 0; i < nums.size(); i++) {
+			if (i >= k && wind.front() == nums[i - k] && wind.front() > nums[i])
+				wind.pop_front();
+			while (!wind.empty() && wind.back() < nums[i])
+				wind.pop_back();
+			wind.push_back(nums[i]);
+			if (i >= k - 1)
+				res.push_back(wind.front());
+		}
+		return res;
+	}
+};
