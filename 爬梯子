@@ -1,0 +1,39 @@
+/*
+解题思路：
+1、首先由n阶梯子，每次可以走一步或者两步，假设n阶梯子由P(n)中解法，那么P(n) = P(n-1) + P(n-2)
+2、根据递归公式，发现其实一个斐波那契列问题，可以采用递归或者非递归的形式，如果是非递归，要通过记忆的方式减少重复计算。
+*/
+
+class ClimbStairs {
+public:
+	//递归形式，采用记忆方式减少回溯次数
+	int climbStair(int n, vector<int> &res)
+	{
+		if (n == 0 || n == 1)
+			return 1;
+		if(res[n - 1] == 0)
+			res[n - 1] = climbStair(n - 1, res) + climbStair(n - 2, res);
+		return res[n-1];
+	}
+	int climbStairs1(int n) {
+		vector<int> res;
+		for (int i = 0; i < n; i++)
+			res.push_back(0);
+		return climbStair(n, res);
+	}
+	//跟根据递归表达式，O(n) = O(n-1) + O(n-2),可以发现是个斐波那契序列
+	int climbStairs(int n) {
+		if (n == 1)
+			return 1;
+		if (n == 2)
+			return 2;
+		int c, a = 1, b = 2;
+		for (int i = 3; i <= n; i++)
+		{
+			c = a + b;
+			a = b;
+			b = c;
+		}
+		return c;
+	}
+};
