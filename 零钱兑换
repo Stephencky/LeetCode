@@ -1,0 +1,38 @@
+/*
+解题思路：
+1、总共有amount元，有n种硬币，最少可以有多少种硬币组成。
+2、f(amount) = 1 + min(f(amount-a[0]), f[amount-a[1]] ..., f[amount-a[n]]);
+3、可以得知初值f(a[0]) = f(a[1]) = ... = f[a[n]] = 1;
+4、其他的值我们可以根据状态方程求解
+*/
+
+class CoinChange{
+public:
+	
+	int coinChange(vector<int>& coins, int amount) {
+		int *res = new int[amount + 1];
+		for (int i = 0; i <= amount; i++)
+			res[i] = 0;
+		for (int c : coins) {
+			if (c <= amount)
+				res[c] = 1;
+		}
+		for (int i = 1; i <= amount; i++) {
+			if (res[i] == 0) {
+				int min_value = INT_MAX;
+				for (int c : coins) {
+					if (i - c >= 0 && res[i - c] != 0 && min_value > res[i - c]) {
+						min_value = res[i - c];
+					}
+
+				}
+				if (min_value != INT_MAX)
+					res[i] = min_value + 1;
+			}
+		}
+		if (res[amount] != 0 || amount == 0)
+			return res[amount];
+		else
+			return -1;
+	}
+};
