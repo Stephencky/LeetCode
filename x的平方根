@@ -1,0 +1,22 @@
+/*
+解题思路：
+1、利用二分法， x的平方为m，则x一定落在[1,m]的区间内，通过二分法不断缩小空间
+2、注意循环的退出条件，x应向下取整
+*/
+class Sqrt {
+public:
+	int mySqrt(int x) {
+		int st = 1, end = x;
+		int mid;
+		while (st < end) {
+			mid = st + (end - st) / 2;
+			if (mid * mid == x || mid * mid < x && (mid + 1)*(mid + 1) > x)
+				return mid;
+			else if (mid * mid > x)
+				end = mid;
+			else
+				st = mid + 1;
+		}
+		return st;
+	}
+};
