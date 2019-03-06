@@ -1,0 +1,47 @@
+/*
+解题思路：
+Solution 1： 动态规划
+对于字符串s，使用dp数组dp[i][j] = 1表示s[i-j]为回文子串
+那么必然有dp[i][i] = 1;和dp[i][i+1] = 1 if s[i] == s[i+1]
+动态规划的状态转移方程为if s[i] == s[j] && dp[i+1][j-1], 那么dp[i][j] = 1;
+根据状态转移方程，我们可以递推出状态转移表
+1*****
+ 1****
+  1***
+   1**
+状态表的填写方向应该右上方，因此，循环条件应该是回文串的长度，据此，得出解法一代码：
+*/
+
+class Palindrome {
+public:
+	string longestPalindrome(string s) {
+		string rs = s;
+		reverse(rs.begin(), rs.end());
+		//printf("%s\n", s.c_str());
+		//printf("%s\n", rs.c_str());
+		int len = s.size();
+		int max_len = 1, st = 0;
+		vector<vector<int> > dp(len, vector<int>(len));
+		for (int i = 0; i < len; i++) {
+			dp[i][i] = 1;
+			if (i + 1 < len && s[i] == s[i + 1]) {
+				dp[i][i + 1] = 1;
+				max_len = 2;
+				st = i;
+			}
+		}
+		
+		for (int i = 2; i < len; i++) { // 回文串的长度
+			for (int j = 0; j + i < len; j++) {
+				if (s[j] == s[j + i] && dp[j+1][j+i-1]) {
+					dp[j][j + i] = 1;
+					if (max_len < i + 1) {
+						max_len = i + 1;
+						st = j;
+					}
+				}
+			}
+		}
+		return s.substr(st, max_len);
+	}
+};
