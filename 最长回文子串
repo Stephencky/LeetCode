@@ -9,7 +9,19 @@ Solution 1： 动态规划
  1****
   1***
    1**
-状态表的填写方向应该右上方，因此，循环条件应该是回文串的长度，据此，得出解法一代码：
+状态表的填写方向应该右上方，因此，循环条件应该是回文串的长度，据此，得出解法一代码；
+Solution 2：
+1、使用动态规划或者中心扩展法都会遇到两种情况，就是回文串为奇数或者偶数的情况，马拉车算法通过空间换时间的方法，
+在每个字符串的中间和最外层插入无关的字符串，如abba变成#a#b#b#a#, cbabc变成#c#b#a#b#c#。
+2、解决了奇数偶数的问题后，我们就需要来了解马拉车算法的核心，我们用一个数组pos[i]表示y以新字符串t[i]为中心
+的回文字符串的半径，同时使用id标识最长回文字符串的中心，mx表示最长字符串所能到达的最有的位置，则如下图：
+-------j---id---i--mx---------
+其中j = 2*id - i， 
+如果mx - i > 0， 则有pos[i] = min[pos[j], mx - i]
+否则，我们需要手动从i为中心求解pos[i]的长度
+3、更新最大的回文串长度和中心位置
+4、通过id和max_len找到原字符串对应的位置
+参见链接：https://www.cnblogs.com/grandyang/p/4475985.html
 */
 
 class Palindrome {
@@ -43,5 +55,31 @@ public:
 			}
 		}
 		return s.substr(st, max_len);
+	}
+	//马拉车算法
+	string longestPalindrome(string s) {
+		string t = "$#";
+		for (int i = 0; i < s.size(); i++) {
+			t += s[i];
+			t += '#';
+		}
+		vector<int> pos(t.size());
+
+		int mx = 1, id = 1;
+		int max_len = 1;
+
+		for (int i = 1; i < t.size(); i++) {
+			if (mx - i > 0) pos[i] = min(pos[2 * id - i], mx - i);
+			while (i - pos[i] >= 0 && i + pos[i] < t.size() && t[i - pos[i]] == t[i + pos[i]])
+				++pos[i];
+			//cout <<"i = "  << i << " " <<pos[i] << endl;
+			if (max_len < pos[i]) {
+				max_len = pos[i];
+				id = i;
+				mx = i + pos[i] - 1;
+			}
+		}
+		//cout << id << " " << mx << endl;
+		return s.substr((id - max_len) / 2, max_len - 1);
 	}
 };
