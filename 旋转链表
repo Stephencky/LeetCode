@@ -1,0 +1,31 @@
+/*
+解题思路：
+1、旋转链表，按照要求旋转k次，很明显，链表整体会分为两部分，后k个节点将成为前k个节点。
+2、因此我们需要几个节点的位置
+①链表最终结果的首节点head_
+②尾节点，需要把尾节点拼接到链表的首节点,tail
+③结果head_节点的前一个节点before
+需要理清楚的几个点：
+①head指针往后移动到第k个节点，head = head->next只需要k-1次
+②如果是tail节点，那么把tail节点移到实际的tail节点，那么需要len-k-1次
+本题解法用了一个很巧妙的办法，就是获取到tail节点的同时，把tail->next = head，这样，
+我们并行的移动head和tail，就可以得到最终结果的head和tail，再把tail置空即可
+*/
+
+class RotateRight {
+public:
+	ListNode* rotateRight(ListNode* head, int k) {
+		int len = 1;
+		for (auto tail = head; tail != NULL; tail = tail->next, ++len) {
+			if (tail->next == NULL) {
+				tail->next = head;
+				for (k = len - k % len; k > 0; k--) {
+					tail = tail->next;
+					head = head->next;
+				}
+				tail->next = NULL;
+			}
+		}
+		return head;
+	}
+};
