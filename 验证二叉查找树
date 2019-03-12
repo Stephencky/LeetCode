@@ -1,0 +1,58 @@
+/*
+解题思路：
+树遍历有三种方式，
+1、前序遍历：先遍历节点，再遍历左子树，再遍历右子树
+2、中序遍历：先遍历左子树，再遍历节点，再遍历右子树
+3、后序遍历：先遍历左子树，再遍历右子树，再遍历节点
+前中后顺序反应在当前节点的遍历顺序
+
+由于题目是二叉查找树，所以，二叉查找树的中序遍历是一个有序数组，因此，可以利用这个特性，校验是否为二叉查找树
+1、方法一：用数组记录遍历过程中的每个节点值
+2、方法二：使用一个最小值，记录中序遍历的每个节点值，节点值比如小于该最小值，别忘了更新最小值
+*/
+
+class ValidBST {
+public:
+	struct TreeNode {
+		int val;
+		TreeNode *left;
+		TreeNode *right;
+		TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+	};
+	void dfs(TreeNode* root, vector<int> &in) {
+		if (root == nullptr)
+			return true;
+		dfs(root->left, in);
+		in.push_back(root->val);
+		dfs(root->right, in);
+	}
+
+	//特性：二叉查找树的中序遍历一定是递增的
+	//Solution1:额外数组
+	bool isValidBST(TreeNode* root) {
+		if (root == NULL)
+			return true;
+		vector<int> in;
+		dfs(root, in);
+		
+		int v = in[0];
+		for (int i = 1; i < in.size(); i++) {
+			if (v >= in[i]) return false;
+			v = in[i];
+		}
+		return true;
+	}
+	//Solution2：最小值记录
+	long long last = LLONG_MIN;
+	bool isValidBST(TreeNode* root) {
+		if (root == NULL)
+			return true;
+		if (isValidBST(root->left)) {
+			if (last < root->val) {
+				last = root->val;
+				return isValidBST(root->right);
+			}
+		}
+		return false;
+	}
+};
