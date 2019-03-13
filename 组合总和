@@ -1,0 +1,71 @@
+组合总和I
+/*
+解题思路：
+1、主要思路还是用枚举的办法，我们可以采用回溯，但回溯首先要解决几个问题点：
+①需要存储结果，因此我们要定义一个全局的变量，并传递给函数
+②保存一条路径，保存路径的时机是回溯遍历后的总和等于target，因此这个时候需要插入结果
+③每一步都需要插入一个过程值，但是下一次回溯前，需要恢复到之前的现场。
+于是有了以下的代码
+④代码仅适用于无重复元素的数组
+
+组合II在组合I的基础上增加了重复元素，同时每个元素仅允许使用一次，因此，整体上多了几了几个地方需要考虑
+1、元素仅允许使用一次，因此递归下标的传递需要在当前下标增加1
+2、重复元素的存在导致需要去重，方法是先对数组进行排序，同时对于重复的元素，我们应该跳过其递归的可能，增加判断
+*/
+
+class Combination {
+public:
+  // 组合I
+	void dfs(vector<int>& candidates, int target, vector<vector<int>> &res, vector<int> &temp, int begin) {
+		if (target == 0) {
+			res.push_back(temp);
+			return;
+		}
+		else {
+			for (int i = begin; i < candidates.size(); i++) {
+				if (target >= candidates[i]) {
+					temp.push_back(candidates[i]);
+					dfs(candidates, target - candidates[i], res, temp, i);
+					temp.pop_back();
+				}
+			}
+		}
+
+	}
+	vector<vector<int>> combinationSum(vector<int>& candidates, int target) {
+		vector<vector<int>> res;
+		vector<int> temp;
+		dfs(candidates, target, res, temp, 0);
+		return res;
+	}
+  // 组合II
+  void dfs2(vector<int>& candidates, int target, vector<vector<int>> &res, vector<int> &temp, int begin) {
+		if (target == 0) {
+			res.push_back(temp);
+			return;
+		}
+		else {
+			for (int i = begin; i < candidates.size(); i++) {
+				if (target >= candidates[i]) {
+            if (i > begin && candidates[i] != candidates[i - 1] || i == begin) { //最骚的操作，去重
+              temp.push_back(candidates[i]);
+              dfs2(candidates, target - candidates[i], res, temp, i + 1);
+              temp.pop_back();
+					  }
+					
+				}
+			}
+		}
+	}
+
+	vector<vector<int>> combinationSum2(vector<int>& candidates, int target) {
+		vector<vector<int>> res;
+		vector<int> temp;
+		sort(candidates.begin(), candidates.end());
+		dfs2(candidates, target, res, temp, 0);
+		return res;
+	}
+};
+
+
+组合总和II
