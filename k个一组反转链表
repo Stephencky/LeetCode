@@ -1,0 +1,49 @@
+/*
+解题思路：
+1、我们要明白k个一组反转，那么低i-1组的末尾指向的是第i组反转后的头指针，而不是反转前的头指针，基于这个特性，
+我们需要先k个一组划分，然后从后面开始进行反转工作。
+2、首先编写一个反转链表长度为k的反转函数，可以使用哨兵简化编程，我们需要用到三个指针，代码参见reverseOneGroup；
+3、其次，我们需要从后往前反转，基于这个特性，我们可以使用递归，但是使用递归有一个坑，我们反转第i-1组的时候，第i-1组的末尾指向的是第i组反转
+前的头指针，所以，我们必须在修正第i-1组末尾节点指向为第i组翻转后的头结点，由于递归的特性，我们可以先递归，然后修改末尾节点指向，然后再反转；
+*/
+class ReverseKGroup {
+public:
+
+	ListNode* reverseOneGroup(ListNode* head, int k) {
+		ListNode ahead(0);
+		ahead.next = head;
+		ListNode* before = nullptr, *next = nullptr;
+		int cur = 0;
+		while (head && cur < k) {
+			cur++;
+			next = head->next;
+			head->next = before;
+			before = head;
+			head = next;
+		}
+		next = head;
+		head = ahead.next;
+		head->next = next;
+		return before;
+	}
+
+	ListNode* reverseKGroup(ListNode* head, int k) {
+		if (head == nullptr)
+			return head;
+		int cnt = 0;
+		struct ListNode* tmp = head, *before = head;
+		while (tmp && cnt < k) {
+			cnt++;
+			before = tmp;
+			tmp = tmp->next;
+		}
+		//cout << tmp->val << endl;
+		if (cnt == k) {
+			tmp = reverseKGroup(tmp, k); // 先递归处理后面的
+			before->next = tmp;   //此乃精华之精华，没有它，你会踩n多坑
+			head = reverseOneGroup(head, k); //放在递归后面，聪明，可以知道后一个序列的头结点
+		}
+
+		return head;
+	}
+};
